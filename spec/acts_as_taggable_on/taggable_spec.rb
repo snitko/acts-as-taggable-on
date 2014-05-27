@@ -513,6 +513,13 @@ describe 'Taggable' do
     expect(model.tag_list.sort).to eq(%w(ruby rails programming).sort)
   end
 
+  it 'should not set tag_list to an empty array after calling update_attributes' do
+    model = TaggableModel.create(name: 'foo', tag_list: 'ruby, rails, programming')
+    model.singleton_class.validates_length_of(:tag_list, minimum: 3)
+    model.update_attributes(name: 'bar')
+    expect(model.errors[:tag_list]).to be_empty
+  end
+
   context 'Duplicates' do
     context 'should not create duplicate taggings' do
       let(:bob) { TaggableModel.create(name: 'Bob') }
